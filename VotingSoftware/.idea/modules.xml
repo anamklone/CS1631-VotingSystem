@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/GUIComponent/GUIComponent.iml" filepath="$PROJECT_DIR$/GUIComponent/GUIComponent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/InputProcessorComponent/InputProcessorComponent.iml" filepath="$PROJECT_DIR$/InputProcessorComponent/InputProcessorComponent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SISServerCommunication/SISServerCommunication.iml" filepath="$PROJECT_DIR$/SISServerCommunication/SISServerCommunication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TableComponent/TableComponent.iml" filepath="$PROJECT_DIR$/TableComponent/TableComponent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/VotingSoftware.iml" filepath="$PROJECT_DIR$/VotingSoftware.iml" />
+    </modules>
+  </component>
+</project>
