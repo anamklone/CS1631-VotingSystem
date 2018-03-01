@@ -45,12 +45,11 @@ public class InputProcessorService extends Service {
         }
     };
 
-    private SmsReceiver smsReceiver;
-
     @Override
     public void onCreate() {
         Log.d(TAG, "Service created");
     }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -65,9 +64,6 @@ public class InputProcessorService extends Service {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
-
-        // Initialize SMSReceiver instance
-        smsReceiver = new SmsReceiver();
 
         return START_STICKY;
     }

@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static final String TAG = "GUIComponent";
 
+    private static final int SMS_PERMISSION_CODE = 0;
+
     //UI Elements
     private Button connect, alert;
     private EditText ipAddr;
@@ -68,13 +70,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         port = findViewById(R.id.portInput);
         messageText = findViewById(R.id.text);
 
-        /*if (!isSmsPermissionGranted()) {
+        if (!isSmsPermissionGranted()) {
             requestSmsPermission();
-        }*/
+        }
     }
 
     // Check if we have SMS permission
-    /*private  boolean isSmsPermissionGranted() {
+    private  boolean isSmsPermissionGranted() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // https://developer.android.com/training/permissions/requesting.html
         }
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, SMS_PERMISSION_CODE);
-    }*/
+    }
 
     public void onClick(View v){
         if(v.getId() == R.id.connectBtn) {
