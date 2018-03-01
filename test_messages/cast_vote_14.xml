@@ -1,0 +1,16 @@
+<Msg>
+<Head>
+<MsgID>701</MsgID>
+<Description>Cast Vote</Description>
+</Head>
+<Body>
+<Item>
+<Key>VoterPhoneNo</Key>
+<Value>4126249999</Value>
+</Item>
+<Item>
+<Key>CandidateID</Key>
+<Value>14</Value>
+</Item>
+</Body>
+</Msg>

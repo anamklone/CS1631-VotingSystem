@@ -1,0 +1,16 @@
+<Msg>
+<Head>
+<MsgID>703</MsgID>
+<Description>Initialize Tally Table</Description>
+</Head>
+<Body>
+<Item>
+<Key>Passcode</Key>
+<Value>*****</Value>
+</Item>
+<Item>
+<Key>CandidateList</Key>
+<Value>2;5;6;14</Value>
+</Item>
+</Body>
+</Msg>
