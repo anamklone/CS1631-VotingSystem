@@ -1,9 +1,8 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
     defaultConfig {
-        applicationId "edu.pitt.cs.cs1631.g16.votingsoftware.tablecomponent"
         minSdkVersion 23
         targetSdkVersion 23
         versionCode 1
@@ -28,4 +27,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    compile project(':SISServerCommunication')
 }

@@ -1,7 +1,9 @@
 package edu.pitt.cs.cs1631.g16.votingsoftware.sisservercommunication;
 
 import android.os.Handler;
+import android.util.Log;
 
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Timer;
@@ -50,11 +52,19 @@ public class SISServerCommunication {
     }
 
     public void register() throws Exception {
-        sendMessage(RECEIVER, MessageType.REGISTER, null, null);
+        sendMessage(RECEIVER, MessageType.REGISTER, "Register", null);
     }
 
     public void connect() throws Exception {
-        sendMessage(RECEIVER, MessageType.CONNECT, null, null);
+        sendMessage(RECEIVER, MessageType.CONNECT, "Connect", null);
+    }
+
+    public void ack(String ackMsgID, String yesNo, String name) throws Exception {
+        Hashtable<String, String> attr = new Hashtable<>();
+        attr.put("AckMsgID", ackMsgID);
+        attr.put("YesNo", yesNo);
+        attr.put("Name", name);
+        sendMessage(RECEIVER, MessageType.ALERT, "Acknowledgement", attr);
     }
 
     public void disconnect() {

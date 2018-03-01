@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("edu.pitt.cs.cs1631.g16.votingsoftware.tablecomponent", appContext.getPackageName());
+        assertEquals("edu.pitt.cs.cs1631.g16.votingsoftware.tablecomponent.test", appContext.getPackageName());
     }
 }

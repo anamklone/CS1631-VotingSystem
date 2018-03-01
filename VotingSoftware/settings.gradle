@@ -1,1 +1,1 @@
-include ':GUIComponent', ':InputProcessorComponent', ':TableComponent', ':SISServerCommunication'
+include ':GUIComponent', ':SISServerCommunication', ':TableComponent', ':InputProcessorComponent'
