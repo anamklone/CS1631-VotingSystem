@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }else if(v.getId() == R.id.alertBtn){
             try {
-                commn.sendMessage(Receiver, MessageType.ALERT, "Click Alert", null);
+                commn.sendMessage(TAG, Receiver, MessageType.ALERT, "Click Alert", null);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }

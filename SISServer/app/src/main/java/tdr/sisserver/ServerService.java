@@ -276,12 +276,16 @@ public class ServerService extends Service {
                             }
                         }
                         //do not forward the message to itself
-                        if(component.name.equalsIgnoreCase(myName)){
+                        /*if(component.name.equalsIgnoreCase(myName)){
                             continue;
-                        }
+                        }*/
                         //forward the message
                        // component.messageQueue.add(kvList);
                         try {
+                            if (component.encoder == null) {
+                                Log.e(TAG, "component.encoder == null");
+                                component.setEncoder(this.msgEncoder);
+                            }
                             component.encoder.sendMsg(kvList);
                         } catch (IOException e) {
                             e.printStackTrace();

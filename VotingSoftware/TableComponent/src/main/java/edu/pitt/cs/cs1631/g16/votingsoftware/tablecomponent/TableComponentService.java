@@ -43,7 +43,7 @@ public class TableComponentService extends Service {
                     str = (String)msg.obj;
                     Log.d(TAG, str);
 
-                    KeyValueList parsedMsg = KeyValueList.decodedKV(str);
+                    KeyValueList parsedMsg = SISServerCommunication.parseMsg(str);
 
                     if (parsedMsg.getValue(MsgId).equals("701")) {
                         castVote(parsedMsg);
@@ -96,6 +96,8 @@ public class TableComponentService extends Service {
     }
 
     private static void initializeTable(KeyValueList msg) {
+        Log.d(TAG, "Initializing tables");
+
         String yesNo = "No";
 
         if (msg.getValue(Passcode).equals(Passcode_Val)) {
@@ -112,6 +114,8 @@ public class TableComponentService extends Service {
     }
 
     private static void castVote(KeyValueList msg) {
+        Log.d(TAG, "Casting vote");
+
         int status = voterTable.recordVoter(msg.getValue(VoterPhoneNo));
         if (status == 0) {
             status = tallyTable.recordVote(msg.getValue(CandidateID));
@@ -122,13 +126,15 @@ public class TableComponentService extends Service {
         attr.put(Status, status + "");
 
         try {
-            commn.sendMessage(Receiver, SISServerCommunication.MessageType.ALERT, "Acknowledge Vote", attr);
+            commn.sendMessage(TAG, Receiver, SISServerCommunication.MessageType.ALERT, "Acknowledge Vote", attr);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
     private static void requestReport(KeyValueList msg) {
+        Log.d(TAG, "Requesting report");
+
         String rankedReport = null;
 
         if (msg.getValue(Passcode).equals(Passcode_Val)) {
@@ -140,7 +146,7 @@ public class TableComponentService extends Service {
         attr.put(RankedReport, rankedReport);
 
         try {
-            commn.sendMessage(Receiver, SISServerCommunication.MessageType.ALERT, "Acknowledge", attr);
+            commn.sendMessage(TAG, Receiver, SISServerCommunication.MessageType.ALERT, "Acknowledge", attr);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }

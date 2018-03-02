@@ -1,9 +1,7 @@
 package edu.pitt.cs.cs1631.g16.votingsoftware.sisservercommunication;
 
 import android.os.Handler;
-import android.util.Log;
 
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Timer;
@@ -52,11 +50,11 @@ public class SISServerCommunication {
     }
 
     public void register() throws Exception {
-        sendMessage(RECEIVER, MessageType.REGISTER, "Register", null);
+        sendMessage(SENDER, RECEIVER, MessageType.REGISTER, "Register", null);
     }
 
     public void connect() throws Exception {
-        sendMessage(RECEIVER, MessageType.CONNECT, "Connect", null);
+        sendMessage(SENDER, RECEIVER, MessageType.CONNECT, "Connect", null);
     }
 
     public void ack(String ackMsgID, String yesNo, String name) throws Exception {
@@ -64,7 +62,7 @@ public class SISServerCommunication {
         attr.put("AckMsgID", ackMsgID);
         attr.put("YesNo", yesNo);
         attr.put("Name", name);
-        sendMessage(RECEIVER, MessageType.ALERT, "Acknowledgement", attr);
+        sendMessage(SENDER, RECEIVER, MessageType.ALERT, "Acknowledgement", attr);
     }
 
     public void disconnect() {
@@ -73,7 +71,7 @@ public class SISServerCommunication {
         }
     }
 
-    public void sendMessage(String receiver, String messageType, String message,
+    public void sendMessage(String sender, String receiver, String messageType, String message,
                             Hashtable<String, String> attributes) throws Exception {
 
         if (client == null || (!client.isSocketAlive()
@@ -84,9 +82,13 @@ public class SISServerCommunication {
         KeyValueList messageInfo = new KeyValueList();
         messageInfo.putPair("Scope", SCOPE);
         messageInfo.putPair("Role", ROLE);
-        messageInfo.putPair("Sender", SENDER);
 
-        if (receiver == null || messageType.isEmpty()) {
+        if (sender == null || sender.isEmpty()) {
+            messageInfo.putPair("Sender", SENDER);
+        }
+        messageInfo.putPair("Sender", sender);
+
+        if (receiver == null || receiver.isEmpty()) {
             throw new Exception("Invalid receiver");
         }
         messageInfo.putPair("Receiver", receiver);
@@ -124,6 +126,21 @@ public class SISServerCommunication {
             throw new Exception("Not connected to the server");
         }
         client.ack();
+    }
+
+    public static KeyValueList parseMsg(String msg) {
+        KeyValueList kvList = new KeyValueList();
+
+        String[] lines = msg.split("\\r?\\n");
+
+        for (int i = 0; i < lines.length; i++) {
+            String[] split = lines[i].split(" : ");
+            for (int j = 1; j < split.length; j += 2) {
+                kvList.putPair(split[j - 1], split[j]);
+            }
+        }
+
+        return kvList;
     }
 
     public class Role {

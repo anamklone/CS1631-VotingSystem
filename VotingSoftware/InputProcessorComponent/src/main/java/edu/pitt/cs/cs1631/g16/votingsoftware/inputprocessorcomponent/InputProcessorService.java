@@ -24,6 +24,9 @@ public class InputProcessorService extends Service {
     private static String Scope = "SIS", Role = "Monitor", Receiver = "TableComponent";
 
     private static final String MsgId = "MsgId";
+    private static final String Passcode = "Passcode";
+    private static final String CandidateList = "CandidateList";
+    private static final String N = "N";
     private static final String VoterPhoneNo = "VoterPhoneNo";
     private static final String CandidateID = "CandidateID";
 
@@ -46,6 +49,8 @@ public class InputProcessorService extends Service {
         }
     };
 
+    private SmsReceiver smsReceiver;
+
     @Override
     public void onCreate() {
         Log.d(TAG, "Service created");
@@ -66,7 +71,9 @@ public class InputProcessorService extends Service {
         }
 
         IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
-        this.registerReceiver(new SmsReceiver(), filter);
+        smsReceiver = new SmsReceiver();
+        registerReceiver(smsReceiver, filter);
+
         return START_STICKY;
     }
 
@@ -80,14 +87,15 @@ public class InputProcessorService extends Service {
     @Override
     public void onDestroy() {
         Log.d(TAG, "Ending service");
+        unregisterReceiver(smsReceiver);
     }
 
     public class SmsReceiver extends BroadcastReceiver {
 
+        private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
+
         public SmsReceiver(){
         }
-
-        private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -111,14 +119,39 @@ public class InputProcessorService extends Service {
                     String sender = messages[0].getOriginatingAddress();
                     String message = sb.toString();
 
+                    String msg = "";
                     Hashtable<String, String> attr = new Hashtable<>();
 
-                    attr.put(MsgId, "701");
-                    attr.put(VoterPhoneNo, sender);
-                    attr.put(CandidateID, message);
+                    String[] splitMsg = message.split(" ");
+
+                    for (int i = 0; i < splitMsg.length; i++) {
+                        Log.d(TAG, "splitMsg[" + i + "] = " + splitMsg[i]);
+                    }
+
+                    if (splitMsg[0].toLowerCase().equals("start")) {
+                        try {
+                            attr.put(MsgId, "703");
+                            attr.put(Passcode, splitMsg[1]);
+                            attr.put(CandidateList, splitMsg[2]);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Incorrect message format");
+                        }
+                    } else if (splitMsg[0] .toLowerCase().equals("stop")) {
+                        try {
+                            attr.put(MsgId, "702");
+                            attr.put(Passcode, splitMsg[1]);
+                            attr.put(N, splitMsg[2]);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Incorrect message format");
+                        }
+                    } else {
+                        attr.put(MsgId, "701");
+                        attr.put(VoterPhoneNo, sender);
+                        attr.put(CandidateID, message);
+                    }
 
                     try {
-                        commn.sendMessage(Receiver, SISServerCommunication.MessageType.ALERT, "Cast Vote", attr);
+                        commn.sendMessage(TAG, Receiver, SISServerCommunication.MessageType.ALERT, msg, attr);
                     } catch (Exception e) {
                         Log.e(TAG, e.getMessage());
                     }
