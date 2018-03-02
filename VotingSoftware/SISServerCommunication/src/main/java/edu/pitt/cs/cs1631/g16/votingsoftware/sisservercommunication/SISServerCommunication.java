@@ -1,6 +1,7 @@
 package edu.pitt.cs.cs1631.g16.votingsoftware.sisservercommunication;
 
 import android.os.Handler;
+import android.util.Log;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -25,6 +26,8 @@ public class SISServerCommunication {
     private static String SENDER;
     private static String RECEIVER = "SISServer";
 
+    int count;
+
     public SISServerCommunication(String serverIp, int serverPort, Handler callbacks,
                                   String scope, String role, String sender) throws Exception {
         if (client != null) {
@@ -32,6 +35,9 @@ public class SISServerCommunication {
         }
         client = new ComponentSocket(serverIp, serverPort, callbacks);
         client.start();
+
+        count++;
+        Log.d(TAG, "count = " + count);
 
         if (scope == null || scope.isEmpty()) {
             throw new Exception("Invalid scope");
