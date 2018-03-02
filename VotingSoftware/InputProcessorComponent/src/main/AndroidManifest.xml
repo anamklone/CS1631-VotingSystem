@@ -10,11 +10,6 @@
             android:enabled="true"
             android:exported="true">
         </service>
-        <receiver android:name=".InputProcessorService$SmsReceiver" android:enabled="true">
-            <intent-filter android:priority="1000">
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

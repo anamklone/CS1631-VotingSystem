@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -48,7 +49,6 @@ public class InputProcessorService extends Service {
     @Override
     public void onCreate() {
         Log.d(TAG, "Service created");
-
     }
 
     @Override
@@ -65,8 +65,11 @@ public class InputProcessorService extends Service {
             Log.e(TAG, e.getMessage());
         }
 
+        IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+        this.registerReceiver(new SmsReceiver(), filter);
         return START_STICKY;
     }
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -79,20 +82,10 @@ public class InputProcessorService extends Service {
         Log.d(TAG, "Ending service");
     }
 
-    public void sendVote(String voterPhoneNo, String candidateID) {
-        Hashtable<String, String> attr = new Hashtable<>();
-        attr.put(MsgId, "701");
-        attr.put(VoterPhoneNo, voterPhoneNo);
-        attr.put(CandidateID, candidateID);
+    public class SmsReceiver extends BroadcastReceiver {
 
-        try {
-            commn.sendMessage(Receiver, SISServerCommunication.MessageType.ALERT, "Cast Vote", attr);
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+        public SmsReceiver(){
         }
-    }
-
-    public static class SmsReceiver extends BroadcastReceiver {
 
         private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 
@@ -118,7 +111,17 @@ public class InputProcessorService extends Service {
                     String sender = messages[0].getOriginatingAddress();
                     String message = sb.toString();
 
-                    //sendVote(sender, message);
+                    Hashtable<String, String> attr = new Hashtable<>();
+
+                    attr.put(MsgId, "701");
+                    attr.put(VoterPhoneNo, sender);
+                    attr.put(CandidateID, message);
+
+                    try {
+                        commn.sendMessage(Receiver, SISServerCommunication.MessageType.ALERT, "Cast Vote", attr);
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
                 }
             }
         }
