@@ -48,8 +48,8 @@ public class InputProcessorService extends Service {
     @Override
     public void onCreate() {
         Log.d(TAG, "Service created");
-    }
 
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -79,7 +79,20 @@ public class InputProcessorService extends Service {
         Log.d(TAG, "Ending service");
     }
 
-    public class SmsReceiver extends BroadcastReceiver {
+    public void sendVote(String voterPhoneNo, String candidateID) {
+        Hashtable<String, String> attr = new Hashtable<>();
+        attr.put(MsgId, "701");
+        attr.put(VoterPhoneNo, voterPhoneNo);
+        attr.put(CandidateID, candidateID);
+
+        try {
+            commn.sendMessage(Receiver, SISServerCommunication.MessageType.ALERT, "Cast Vote", attr);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    public static class SmsReceiver extends BroadcastReceiver {
 
         private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 
@@ -105,18 +118,7 @@ public class InputProcessorService extends Service {
                     String sender = messages[0].getOriginatingAddress();
                     String message = sb.toString();
 
-                    if (message.toLowerCase().startsWith("")) {
-                        Hashtable<String, String> attr = new Hashtable<>();
-                        attr.put(MsgId, "701");
-                        attr.put(VoterPhoneNo, sender);
-                        attr.put(CandidateID, message);
-
-                        try {
-                            commn.sendMessage(Receiver, SISServerCommunication.MessageType.ALERT, "Cast Vote", attr);
-                        } catch (Exception e) {
-                            Log.e(TAG, e.getMessage());
-                        }
-                    }
+                    //sendVote(sender, message);
                 }
             }
         }

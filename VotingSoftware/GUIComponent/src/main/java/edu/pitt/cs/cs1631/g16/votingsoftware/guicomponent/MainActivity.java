@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+
 import edu.pitt.cs.cs1631.g16.votingsoftware.inputprocessorcomponent.InputProcessorService;
 import edu.pitt.cs.cs1631.g16.votingsoftware.sisservercommunication.SISServerCommunication;
 import edu.pitt.cs.cs1631.g16.votingsoftware.sisservercommunication.SISServerCommunication.MessageType;
@@ -71,22 +72,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         messageText = findViewById(R.id.text);
 
         if (!isSmsPermissionGranted()) {
+            Log.d(TAG, "Request permission" );
             requestSmsPermission();
+        } else {
+            Log.d(TAG, "Already have permission");
         }
     }
 
     // Check if we have SMS permission
     private  boolean isSmsPermissionGranted() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED;
     }
 
     // Request runtime SMS permission
     private void requestSmsPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECEIVE_SMS)) {
             // You may display a non-blocking explanation here, read more in the documentation:
             // https://developer.android.com/training/permissions/requesting.html
         }
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, SMS_PERMISSION_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECEIVE_SMS}, SMS_PERMISSION_CODE);
     }
 
     public void onClick(View v){
