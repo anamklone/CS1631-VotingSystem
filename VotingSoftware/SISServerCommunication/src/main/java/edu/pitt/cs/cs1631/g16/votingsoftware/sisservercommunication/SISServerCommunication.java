@@ -1,7 +1,6 @@
 package edu.pitt.cs.cs1631.g16.votingsoftware.sisservercommunication;
 
 import android.os.Handler;
-import android.util.Log;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -10,10 +9,11 @@ import java.util.TimerTask;
 
 import tdr.sisprjremote.ComponentSocket;
 import tdr.sisprjremote.Util.KeyValueList;
+import tdr.sisprjremote.Util.NetTool;
 
 public class SISServerCommunication {
 
-    public static final String TAG = "SISServerCommunication";
+    public static String TAG = "SISServerCommunication";
 
     static ComponentSocket client;
 
@@ -21,23 +21,17 @@ public class SISServerCommunication {
     public static final int DISCONNECTED = 2;
     public static final int MESSAGE_RECEIVED = 3;
 
+    private static final int PORT = 8000;
+
     private static String SCOPE;
     private static String ROLE;
-    private static String SENDER;
-    private static String RECEIVER = "SISServer";
 
-    int count;
-
-    public SISServerCommunication(String serverIp, int serverPort, Handler callbacks,
-                                  String scope, String role, String sender) throws Exception {
+    public SISServerCommunication(Handler callbacks, String scope, String role) throws Exception {
         if (client != null) {
             client.killThread();
         }
-        client = new ComponentSocket(serverIp, serverPort, callbacks);
+        client = new ComponentSocket(NetTool.getPublicAddress(), PORT, callbacks);
         client.start();
-
-        count++;
-        Log.d(TAG, "count = " + count);
 
         if (scope == null || scope.isEmpty()) {
             throw new Exception("Invalid scope");
@@ -48,27 +42,22 @@ public class SISServerCommunication {
             throw new Exception("Invalid role");
         }
         this.ROLE = role;
-
-        if (sender == null || sender.isEmpty()) {
-            throw new Exception("Invalid sender");
-        }
-        this.SENDER = sender;
     }
 
     public void register() throws Exception {
-        sendMessage(SENDER, RECEIVER, MessageType.REGISTER, "Register", null);
+        sendMessage(SISServer, MessageType.REGISTER, "Register", null);
     }
 
     public void connect() throws Exception {
-        sendMessage(SENDER, RECEIVER, MessageType.CONNECT, "Connect", null);
+        sendMessage(SISServer, MessageType.CONNECT, "Connect", null);
     }
 
-    public void ack(String ackMsgID, String yesNo, String name) throws Exception {
+    public static void ack(String ackMsgID, String yesNo, String name) throws Exception {
         Hashtable<String, String> attr = new Hashtable<>();
         attr.put("AckMsgID", ackMsgID);
         attr.put("YesNo", yesNo);
         attr.put("Name", name);
-        sendMessage(SENDER, RECEIVER, MessageType.ALERT, "Acknowledgement", attr);
+        sendMessage(SISServerCommunication.VotingSoftware, MessageType.ALERT, "Acknowledgement", attr);
     }
 
     public void disconnect() {
@@ -77,7 +66,7 @@ public class SISServerCommunication {
         }
     }
 
-    public void sendMessage(String sender, String receiver, String messageType, String message,
+    public static void sendMessage(String receiver, String messageType, String message,
                             Hashtable<String, String> attributes) throws Exception {
 
         if (client == null || (!client.isSocketAlive()
@@ -88,16 +77,11 @@ public class SISServerCommunication {
         KeyValueList messageInfo = new KeyValueList();
         messageInfo.putPair("Scope", SCOPE);
         messageInfo.putPair("Role", ROLE);
+        messageInfo.putPair("Sender", VotingSoftware);
 
-        if (sender == null || sender.isEmpty()) {
-            messageInfo.putPair("Sender", SENDER);
+        if (receiver != null && !receiver.isEmpty()) {
+            messageInfo.putPair("Receiver", receiver);
         }
-        messageInfo.putPair("Sender", sender);
-
-        if (receiver == null || receiver.isEmpty()) {
-            throw new Exception("Invalid receiver");
-        }
-        messageInfo.putPair("Receiver", receiver);
 
         if (messageType == null || messageType.isEmpty()) {
             throw new Exception("Invalid messageType");
@@ -117,7 +101,7 @@ public class SISServerCommunication {
         sendMessage(messageInfo);
     }
 
-    private void sendMessage(final KeyValueList messageInfo) {
+    private static void sendMessage(final KeyValueList messageInfo) {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -148,6 +132,19 @@ public class SISServerCommunication {
 
         return kvList;
     }
+
+    public static final String SISServer = "SISServer";
+    public static final String VotingSoftware = "VotingSoftware";
+    public static final String MsgId = "MsgId";
+    public static final String AckMsgId = "AckMsgId";
+    public static final String Passcode = "Passcode", Passcode_Val = "*****";
+    public static final String CandidateList = "CandidateList";
+    public static final String VoterPhoneNo = "VoterPhoneNo";
+    public static final String CandidateID = "CandidateID";
+    public static final String N = "N";
+    public static final String Status = "Status";
+    public static final String RankedReport = "RankedReport";
+    public static final String YesNo = "YesNo";
 
     public class Role {
         public static final String BASIC = "Basic";

@@ -5,11 +5,7 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <application>
-        <service
-            android:name=".InputProcessorService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
+        <receiver android:name=".InputProcessor" android:enabled="true" android:exported="true" />
     </application>
 
 </manifest>

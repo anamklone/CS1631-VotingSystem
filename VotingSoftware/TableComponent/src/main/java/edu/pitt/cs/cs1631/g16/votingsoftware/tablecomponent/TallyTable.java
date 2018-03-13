@@ -34,7 +34,7 @@ public class TallyTable {
         ArrayList<Map.Entry<String, Integer>> sortedTable = new ArrayList(table.entrySet());
         Collections.sort(sortedTable, new Comparator<Map.Entry<String, Integer>>() {
             public int compare(Map.Entry<String, Integer> c1, Map.Entry<String, Integer> c2) {
-                return c2.getValue().compareTo(c1.getValue());
+                return c1.getValue().compareTo(c2.getValue());
             }
         });
 
