@@ -3,15 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GUIComponent/GUIComponent.iml" filepath="$PROJECT_DIR$/GUIComponent/GUIComponent.iml" />
-      <module fileurl="file://C:\Users\Ben's Laptop\Desktop\CS1631-VotingSystem\VotingSoftware\GUIComponent\GUIComponent.iml" filepath="C:\Users\Ben's Laptop\Desktop\CS1631-VotingSystem\VotingSoftware\GUIComponent\GUIComponent.iml" />
       <module fileurl="file://$PROJECT_DIR$/InputProcessorComponent/InputProcessorComponent.iml" filepath="$PROJECT_DIR$/InputProcessorComponent/InputProcessorComponent.iml" />
-      <module fileurl="file://C:\Users\Ben's Laptop\Desktop\CS1631-VotingSystem\VotingSoftware\InputProcessorComponent\InputProcessorComponent.iml" filepath="C:\Users\Ben's Laptop\Desktop\CS1631-VotingSystem\VotingSoftware\InputProcessorComponent\InputProcessorComponent.iml" />
       <module fileurl="file://$PROJECT_DIR$/SISServerCommunication/SISServerCommunication.iml" filepath="$PROJECT_DIR$/SISServerCommunication/SISServerCommunication.iml" />
-      <module fileurl="file://C:\Users\Ben's Laptop\Desktop\CS1631-VotingSystem\VotingSoftware\SISServerCommunication\SISServerCommunication.iml" filepath="C:\Users\Ben's Laptop\Desktop\CS1631-VotingSystem\VotingSoftware\SISServerCommunication\SISServerCommunication.iml" />
       <module fileurl="file://$PROJECT_DIR$/TableComponent/TableComponent.iml" filepath="$PROJECT_DIR$/TableComponent/TableComponent.iml" />
-      <module fileurl="file://C:\Users\Ben's Laptop\Desktop\CS1631-VotingSystem\VotingSoftware\TableComponent\TableComponent.iml" filepath="C:\Users\Ben's Laptop\Desktop\CS1631-VotingSystem\VotingSoftware\TableComponent\TableComponent.iml" />
       <module fileurl="file://$PROJECT_DIR$/VotingSoftware.iml" filepath="$PROJECT_DIR$/VotingSoftware.iml" />
-      <module fileurl="file://C:\Users\Ben's Laptop\Desktop\CS1631-VotingSystem\VotingSoftware\VotingSoftware.iml" filepath="C:\Users\Ben's Laptop\Desktop\CS1631-VotingSystem\VotingSoftware\VotingSoftware.iml" />
     </modules>
   </component>
 </project>

@@ -64,6 +64,7 @@ public class TableComponentService extends Service {
 
     @Override
     public void onCreate() {
+        super.onCreate();
         Log.d(TAG, "Service created");
     }
 
@@ -71,6 +72,10 @@ public class TableComponentService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Starting service");
 
+        if(intent == null)
+            Log.e(TAG, "Intent is null");
+        else
+            Log.e(TAG, "Intent is not null");
         String[] connectData = intent.getDataString().split(";");
 
         try {
@@ -81,7 +86,7 @@ public class TableComponentService extends Service {
             Log.e(TAG, e.getMessage());
         }
 
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override
@@ -92,6 +97,7 @@ public class TableComponentService extends Service {
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         Log.d(TAG, "Ending service");
     }
 
@@ -115,7 +121,14 @@ public class TableComponentService extends Service {
 
     private static void castVote(KeyValueList msg) {
         Log.d(TAG, "Casting vote");
-
+        if(voterTable == null)
+            Log.i(TAG, "Voter Table is null");
+        if(msg == null)
+            Log.i(TAG, "msg is null");
+        if(VoterPhoneNo == null)
+            Log.i(TAG, "voter phone no is null");
+        if(CandidateID == null)
+            Log.i(TAG, "candidate ID is null");
         int status = voterTable.recordVoter(msg.getValue(VoterPhoneNo));
         if (status == 0) {
             status = tallyTable.recordVote(msg.getValue(CandidateID));

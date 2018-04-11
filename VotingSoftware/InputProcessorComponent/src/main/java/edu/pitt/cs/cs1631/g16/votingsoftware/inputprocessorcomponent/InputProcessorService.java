@@ -53,6 +53,7 @@ public class InputProcessorService extends Service {
 
     @Override
     public void onCreate() {
+        super.onCreate();
         Log.d(TAG, "Service created");
     }
 
@@ -60,6 +61,10 @@ public class InputProcessorService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Starting service");
 
+        if(intent == null)
+            Log.e(TAG, "Intent is null");
+        else
+            Log.e(TAG, "Intent is not null");
         String[] connectData = intent.getDataString().split(";");
 
         try {
@@ -74,7 +79,7 @@ public class InputProcessorService extends Service {
         smsReceiver = new SmsReceiver();
         registerReceiver(smsReceiver, filter);
 
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
 
@@ -86,6 +91,7 @@ public class InputProcessorService extends Service {
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         Log.d(TAG, "Ending service");
         unregisterReceiver(smsReceiver);
     }
@@ -117,6 +123,7 @@ public class InputProcessorService extends Service {
                         sb.append(messages[i].getMessageBody());
                     }
                     String sender = messages[0].getOriginatingAddress();
+                    Log.e(TAG, sender);
                     String message = sb.toString();
 
                     String msg = "";
