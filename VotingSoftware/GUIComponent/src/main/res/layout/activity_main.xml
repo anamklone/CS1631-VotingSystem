@@ -6,107 +6,135 @@
     android:layout_height="match_parent"
     tools:context="edu.pitt.cs.cs1631.g16.votingsoftware.guicomponent.MainActivity"
     android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="9">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/ipInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="192.168.232.2"
+            tools:layout_editor_absoluteX="85dp"
+            tools:layout_editor_absoluteY="169dp" />
+
+        <EditText
+            android:id="@+id/portInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8000" />
 
 
-            <EditText
-                android:id="@+id/ipInput"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="192.168.232.2"
-                tools:layout_editor_absoluteX="85dp"
-                tools:layout_editor_absoluteY="169dp" />
+        <Button
+            android:id="@+id/connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connect" />
 
-            <EditText
-                android:id="@+id/portInput"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="8000" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/connectBtn"
-                android:layout_width="99dp"
-                android:layout_height="wrap_content"
-                android:text="Connect" />
-        </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/gui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GUI\nComponent" />
+
+
+        <Button
+            android:id="@+id/input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Input\nProcessor" />
+
+
+        <Button
+            android:id="@+id/table"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Table\nComponent" />
+
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="6">
+        android:layout_height="150dp">
 
-        <LinearLayout
+        <TableLayout
+            android:id="@+id/resultsTable"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Example Script.script"
-                android:textSize="20sp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Example Script.script"
-                android:textSize="20sp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Example Script.script"
-                android:textSize="20sp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Example Script.script"
-                android:textSize="20sp"/>
-
-        </LinearLayout>
-
+            android:layout_height="match_parent" />
 
     </ScrollView>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_weight="9">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Start" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/vote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Vote" />
-        <Button
-            android:id="@+id/request"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Results" />
-        <Button
-            android:id="@+id/script"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Run Script" />
+            <Button
+                android:id="@+id/start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Initialize Table" />
+
+            <Button
+                android:id="@+id/vote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cast Vote" />
+
+            <Button
+                android:id="@+id/results"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Request Report" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send Message" />
+
+            <Button
+                android:id="@+id/script"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Run Script" />
+
+        </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:layout_weight="6"
-        android:id="@+id/messageReceivedList"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/messageReceivedListText"
-        android:scrollbars="vertical"
-        android:layout_marginTop="20dp" />
+        android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/messageReceivedList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/messageReceivedListText"
+            android:scrollbars="vertical"
+            android:layout_marginTop="10dp" />
+
+    </ScrollView>
 
 </android.support.v7.widget.LinearLayoutCompat>

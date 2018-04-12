@@ -1,7 +1,6 @@
 package edu.pitt.cs.cs1631.g16.votingsoftware.sisservercommunication;
 
 import android.os.Handler;
-import android.util.Log;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -24,20 +23,15 @@ public class SISServerCommunication {
     private static String SCOPE;
     private static String ROLE;
     private static String SENDER;
-    private static String RECEIVER = "SISServer";
-
-    int count;
 
     public SISServerCommunication(String serverIp, int serverPort, Handler callbacks,
                                   String scope, String role, String sender) throws Exception {
         if (client != null) {
             client.killThread();
         }
+
         client = new ComponentSocket(serverIp, serverPort, callbacks);
         client.start();
-
-        count++;
-        Log.d(TAG, "count = " + count);
 
         if (scope == null || scope.isEmpty()) {
             throw new Exception("Invalid scope");
@@ -56,19 +50,19 @@ public class SISServerCommunication {
     }
 
     public void register() throws Exception {
-        sendMessage(SENDER, RECEIVER, MessageType.REGISTER, "Register", null);
+        sendMessage(SENDER, SISServer, MessageType.REGISTER, "Register", null);
     }
 
     public void connect() throws Exception {
-        sendMessage(SENDER, RECEIVER, MessageType.CONNECT, "Connect", null);
+        sendMessage(SENDER, SISServer, MessageType.CONNECT, "Connect", null);
     }
 
-    public void ack(String ackMsgID, String yesNo, String name) throws Exception {
+    public void ack(String receiver, String ackMsgID, String yesNo, String name) throws Exception {
         Hashtable<String, String> attr = new Hashtable<>();
         attr.put("AckMsgID", ackMsgID);
         attr.put("YesNo", yesNo);
         attr.put("Name", name);
-        sendMessage(SENDER, RECEIVER, MessageType.ALERT, "Acknowledgement", attr);
+        sendMessage(SENDER, receiver, MessageType.ALERT, "Acknowledgement", attr);
     }
 
     public void disconnect() {
@@ -77,7 +71,7 @@ public class SISServerCommunication {
         }
     }
 
-    public void sendMessage(String sender, String receiver, String messageType, String message,
+    public String sendMessage(String sender, String receiver, String messageType, String message,
                             Hashtable<String, String> attributes) throws Exception {
 
         if (client == null || (!client.isSocketAlive()
@@ -115,6 +109,8 @@ public class SISServerCommunication {
         }
 
         sendMessage(messageInfo);
+
+        return messageInfo.toString();
     }
 
     private void sendMessage(final KeyValueList messageInfo) {
@@ -148,6 +144,19 @@ public class SISServerCommunication {
 
         return kvList;
     }
+
+    public static final String SISServer = "SISServer";
+    public static final String MsgId = "MsgId";
+    public static final String AckMsgId = "AckMsgId";
+    public static final String Description = "Description";
+    public static final String Passcode = "Passcode", Passcode_Val = "*****";
+    public static final String CandidateList = "CandidateList";
+    public static final String VoterPhoneNo = "VoterPhoneNo";
+    public static final String CandidateID = "CandidateID";
+    public static final String N = "N";
+    public static final String Status = "Status";
+    public static final String RankedReport = "RankedReport";
+    public static final String YesNo = "YesNo";
 
     public class Role {
         public static final String BASIC = "Basic";

@@ -95,7 +95,7 @@ public class ComponentSocket extends Thread {
     public void setMessage(KeyValueList kvList) {
         if(msgEncoder!=null){
             try {
-                Log.e(SISServerCommunication.TAG, "Sending messsage." );
+                Log.e(SISServerCommunication.TAG, "Sending message." );
                 msgEncoder.sendMsg(kvList);
             } catch (IOException e) {
                 e.printStackTrace();

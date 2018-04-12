@@ -209,6 +209,7 @@ public class ServerService extends Service {
                         int index = Components.componentList.indexOf(cmpttmp);
                         Components.componentList.get(index).setDecoder(this.msgDecoder);
                         Components.componentList.get(index).setEncoder(this.msgEncoder);
+                        if(Components.componentList.get(index).encoder != null) Log.d(TAG, "set encoder: " + Components.componentList.get(index).name);
                         Components.componentList.get(index).setMessageQueue(this.messageQueue);
                         Message messagetmp = activityCallbacks.obtainMessage(SISClientListActivity.NEW_COMPONENT_CONNECTED);
                         messagetmp.obj = connectionNumber + ":" +sender+":"+ ip + ":" + port;
@@ -257,35 +258,40 @@ public class ServerService extends Service {
                     break;
                 case SISMessage.ALERT:
                     for(Component component:Components.componentList){
+                        Log.d(TAG, component.name);
                         if(!scope.equalsIgnoreCase(SISMessage.DEFAULT_SCOPE)){
                             //scopeValue = scope.substring(scope.indexOf(".")+1, scope.length());
                             if(!scope.equalsIgnoreCase(component.scope)){
+                                Log.d(TAG, "scope");
                                 continue;
                             }
                         }
                         //the receivers must be monitors
                         if(role!=null && !role.equals("")){
                             if(!role.equalsIgnoreCase(Component.MONITOR)){
+                                Log.d(TAG, "role");
                                 continue;
                             }
                         }
                         //role or name
                         if(receiver!=null && !receiver.equals("")){
                             if(!receiver.equalsIgnoreCase(component.name)){
+                                Log.d(TAG, "receiver");
                                 continue;
                             }
                         }
                         //do not forward the message to itself
                         if(component.name.equalsIgnoreCase(myName)){
+                            Log.d(TAG, "do not forward message to itself");
                             continue;
                         }
                         //forward the message
                        // component.messageQueue.add(kvList);
                         try {
-                            if (component.encoder==null) {
-                                component.setEncoder(this.msgEncoder);
-                            }
+                            if(component == null) Log.d(TAG, "com is null: " + kvList.toString());
+                            if(component.encoder == null) Log.d(TAG, "encoder is null: " + component.name);
                             component.encoder.sendMsg(kvList);
+                            Log.d(TAG, "send message");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

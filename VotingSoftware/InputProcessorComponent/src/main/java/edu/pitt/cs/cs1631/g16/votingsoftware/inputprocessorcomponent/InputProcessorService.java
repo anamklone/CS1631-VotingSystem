@@ -24,13 +24,6 @@ public class InputProcessorService extends Service {
     private SISServerCommunication commn;
     private static String Scope = "SIS", Role = "Monitor", Receiver = "TableComponent";
 
-    private static final String MsgId = "MsgId";
-    private static final String Passcode = "Passcode";
-    private static final String CandidateList = "CandidateList";
-    private static final String N = "N";
-    private static final String VoterPhoneNo = "VoterPhoneNo";
-    private static final String CandidateID = "CandidateID";
-
     static Handler callbacks = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -144,24 +137,24 @@ public class InputProcessorService extends Service {
 
                     if (splitMsg[0].toLowerCase().equals("start")) {
                         try {
-                            attr.put(MsgId, "703");
-                            attr.put(Passcode, splitMsg[1]);
-                            attr.put(CandidateList, splitMsg[2]);
+                            attr.put(SISServerCommunication.MsgId, "703");
+                            attr.put(SISServerCommunication.Passcode, splitMsg[1]);
+                            attr.put(SISServerCommunication.CandidateList, splitMsg[2]);
                         } catch (Exception e) {
                             Log.e(TAG, "Incorrect message format");
                         }
                     } else if (splitMsg[0] .toLowerCase().equals("stop")) {
                         try {
-                            attr.put(MsgId, "702");
-                            attr.put(Passcode, splitMsg[1]);
-                            attr.put(N, splitMsg[2]);
+                            attr.put(SISServerCommunication.MsgId, "702");
+                            attr.put(SISServerCommunication.Passcode, splitMsg[1]);
+                            attr.put(SISServerCommunication.N, splitMsg[2]);
                         } catch (Exception e) {
                             Log.e(TAG, "Incorrect message format");
                         }
                     } else {
-                        attr.put(MsgId, "701");
-                        attr.put(VoterPhoneNo, sender);
-                        attr.put(CandidateID, message);
+                        attr.put(SISServerCommunication.MsgId, "701");
+                        attr.put(SISServerCommunication.VoterPhoneNo, sender);
+                        attr.put(SISServerCommunication.CandidateID, message);
                     }
 
                     try {

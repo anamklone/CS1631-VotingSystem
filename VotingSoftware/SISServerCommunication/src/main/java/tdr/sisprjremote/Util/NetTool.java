@@ -6,7 +6,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
-class NetTool {
+public class NetTool {
     /**
      * If an address can be used for public access
      *

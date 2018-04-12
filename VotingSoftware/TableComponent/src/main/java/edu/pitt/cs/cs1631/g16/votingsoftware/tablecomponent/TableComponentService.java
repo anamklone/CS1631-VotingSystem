@@ -20,15 +20,6 @@ public class TableComponentService extends Service {
     private static SISServerCommunication commn;
     private static String Scope = "SIS", Role = "Monitor", Receiver = "GUIComponent";
 
-    private static final String MsgId = "MsgId";
-    private static final String Passcode = "Passcode", Passcode_Val = "*****";
-    private static final String CandidateList = "CandidateList";
-    private static final String VoterPhoneNo = "VoterPhoneNo";
-    private static final String CandidateID = "CandidateID";
-    private static final String N = "N";
-    private static final String Status = "Status";
-    private static final String RankedReport = "RankedReport";
-
     static Handler callbacks = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -46,11 +37,11 @@ public class TableComponentService extends Service {
 
                     KeyValueList parsedMsg = SISServerCommunication.parseMsg(str);
 
-                    if (parsedMsg.getValue(MsgId).equals("701")) {
+                    if (parsedMsg.getValue(SISServerCommunication.MsgId).equals("701")) {
                         castVote(parsedMsg);
-                    } else if (parsedMsg.getValue(MsgId).equals("702")) {
+                    } else if (parsedMsg.getValue(SISServerCommunication.MsgId).equals("702")) {
                         requestReport(parsedMsg);
-                    } else if (parsedMsg.getValue(MsgId).equals("703")) {
+                    } else if (parsedMsg.getValue(SISServerCommunication.MsgId).equals("703")) {
                         initializeTable(parsedMsg);
                     }
                     break;
@@ -113,15 +104,16 @@ public class TableComponentService extends Service {
 
         String yesNo = "No";
 
-        if (msg.getValue(Passcode).equals(Passcode_Val)) {
+        if (msg.getValue(SISServerCommunication.Passcode).equals(SISServerCommunication.Passcode_Val)) {
             voterTable = new VoterTable();
-            tallyTable = new TallyTable(msg.getValue(CandidateList));
+            tallyTable = new TallyTable(msg.getValue(SISServerCommunication.CandidateList));
             yesNo = "Yes";
-        }else
+        } else {
             Log.i(TAG, "Incorrect Passcode!!!!");
+        }
 
         try {
-            commn.ack("701", yesNo, TAG);
+            commn.ack(Receiver, "26", yesNo, TAG);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -133,18 +125,18 @@ public class TableComponentService extends Service {
             Log.i(TAG, "Voter Table is null");
         if(msg == null)
             Log.i(TAG, "msg is null");
-        if(VoterPhoneNo == null)
+        if(SISServerCommunication.VoterPhoneNo == null)
             Log.i(TAG, "voter phone no is null");
-        if(CandidateID == null)
+        if(SISServerCommunication.CandidateID == null)
             Log.i(TAG, "candidate ID is null");
-        int status = voterTable.recordVoter(msg.getValue(VoterPhoneNo));
+        int status = voterTable.recordVoter(msg.getValue(SISServerCommunication.VoterPhoneNo));
         if (status == 0) {
-            status = tallyTable.recordVote(msg.getValue(CandidateID));
+            status = tallyTable.recordVote(msg.getValue(SISServerCommunication.CandidateID));
         }
 
         Hashtable<String, String> attr = new Hashtable<>();
-        attr.put(MsgId, "711");
-        attr.put(Status, status + "");
+        attr.put(SISServerCommunication.MsgId, "711");
+        attr.put(SISServerCommunication.Status, status + "");
 
         try {
             commn.sendMessage(TAG, Receiver, SISServerCommunication.MessageType.ALERT, "Acknowledge Vote", attr);
@@ -156,15 +148,20 @@ public class TableComponentService extends Service {
     private static void requestReport(KeyValueList msg) {
         Log.d(TAG, "Requesting report");
 
+        if(voterTable == null)
+            Log.i(TAG, "Voter Table is null");
+        if(msg == null)
+            Log.i(TAG, "msg is null");
+
         String rankedReport = null;
 
-        if (msg.getValue(Passcode).equals(Passcode_Val)) {
-            rankedReport = tallyTable.rankedCandidates(Integer.parseInt(msg.getValue(N)));
+        if (msg.getValue(SISServerCommunication.Passcode).equals(SISServerCommunication.Passcode_Val)) {
+            rankedReport = tallyTable.rankedCandidates(Integer.parseInt(msg.getValue(SISServerCommunication.N)));
         }
 
         Hashtable<String, String> attr = new Hashtable<>();
-        attr.put(MsgId, "712");
-        attr.put(RankedReport, rankedReport);
+        attr.put(SISServerCommunication.MsgId, "712");
+        attr.put(SISServerCommunication.RankedReport, rankedReport);
 
         try {
             commn.sendMessage(TAG, Receiver, SISServerCommunication.MessageType.ALERT, "Acknowledge", attr);

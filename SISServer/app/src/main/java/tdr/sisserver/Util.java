@@ -233,6 +233,7 @@ class MsgEncoder {
     /*
      * Constructor
      */
+
     public MsgEncoder(OutputStream out) throws IOException {
         writer = new PrintStream(out);
     }
@@ -263,6 +264,7 @@ class MsgDecoder {
     /*
      * Constructor
      */
+
     public MsgDecoder(InputStream in) throws IOException {
         reader = new BufferedReader(new InputStreamReader(in));
     }
