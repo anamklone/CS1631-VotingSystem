@@ -596,6 +596,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             element.normalize();
 
             NodeList nList = doc.getElementsByTagName("Msg");
+            Log.d(TAG, "length = " + nList.getLength());
 
             for (int i = 0; i < nList.getLength(); i++) {
                 Node node = nList.item(i);
@@ -607,10 +608,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 attr.put(SISServerCommunication.MsgId, msgId);
                 attr.put(SISServerCommunication.Description, description);
 
-                nList = doc.getElementsByTagName("Item");
+                NodeList nList2 = element2.getElementsByTagName("Item");
 
-                for (int j = 0; j < nList.getLength(); j++) {
-                    node = nList.item(j);
+                for (int j = 0; j < nList2.getLength(); j++) {
+                    node = nList2.item(j);
                     element2 = (Element) node;
                     String key = getValue("Key", element2);
                     String value = getValue("Value", element2);
