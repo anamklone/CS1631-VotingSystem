@@ -30,12 +30,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Timer;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -541,32 +537,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 uri = data.getData();
                 Log.i(TAG, "Uri: " + uri.toString());
 
-                if (requestCode == 1) {
-                    parseXMLMsg(uri);
-                } else if (requestCode == 2) {
-
-                    StringBuilder filePath = new StringBuilder(uri.getScheme() + "://" + uri.getHost());
-
-                    String[] path = uri.getPath().split("/");
-                    for (int i = 0; i < path.length - 1; i++) {
-                        filePath.append(path[i] + "/");
-                    }
-                    Log.d(TAG, "filePath = " + filePath);
-
-                    try {
-                        InputStream inputStream = getContentResolver().openInputStream(uri);
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            Log.d(TAG, line);
-                            uri = Uri.parse(filePath.toString() + line);
-                            Log.d(TAG, "URI: " + uri);
-                            parseXMLMsg(uri);
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, e.toString());
-                    }
-                }
+                if (requestCode == 1) parseXMLMsg(uri);
+                else if (requestCode == 2) parseXMLMsgs(uri);
             }
         }
     }
@@ -606,6 +578,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String str = commn.sendMessage(TAG, receiver, SISServerCommunication.MessageType.ALERT, Msg, attr);
 
             messageText.append(str + "***********\n");
+
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+    }
+
+    private void parseXMLMsgs(Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputStream);
+
+            Element element = doc.getDocumentElement();
+            element.normalize();
+
+            NodeList nList = doc.getElementsByTagName("Msg");
+
+            for (int i = 0; i < nList.getLength(); i++) {
+                Node node = nList.item(i);
+                Element element2 = (Element) node;
+                String msgId = getValue("MsgID", element2);
+                String description = getValue(SISServerCommunication.Description, element2);
+
+                Hashtable<String, String> attr = new Hashtable<>();
+                attr.put(SISServerCommunication.MsgId, msgId);
+                attr.put(SISServerCommunication.Description, description);
+
+                nList = doc.getElementsByTagName("Item");
+
+                for (int j = 0; j < nList.getLength(); j++) {
+                    node = nList.item(j);
+                    element2 = (Element) node;
+                    String key = getValue("Key", element2);
+                    String value = getValue("Value", element2);
+                    attr.put(key, value);
+                }
+
+                String receiver = "TableComponent";
+                String str = commn.sendMessage(TAG, receiver, SISServerCommunication.MessageType.ALERT, Msg, attr);
+
+                messageText.append(str + "***********\n");
+            }
 
         } catch (Exception e) {
             Log.e(TAG, e.toString());
