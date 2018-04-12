@@ -9,7 +9,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="10">
+            android:layout_weight="9">
 
 
             <EditText
@@ -74,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_weight="10">
+        android:layout_weight="9">
 
         <Button
             android:id="@+id/start"
@@ -100,11 +100,13 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/text"
+        android:layout_weight="6"
+        android:id="@+id/messageReceivedList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="8"
-        android:text="Results Panel" />
+        android:layout_below="@+id/messageReceivedListText"
+        android:scrollbars="vertical"
+        android:layout_marginTop="20dp" />
 
 
 </android.support.v7.widget.LinearLayoutCompat>

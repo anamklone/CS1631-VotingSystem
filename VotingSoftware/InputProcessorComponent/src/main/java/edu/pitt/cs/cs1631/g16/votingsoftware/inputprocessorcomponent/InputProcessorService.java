@@ -13,6 +13,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import java.util.Hashtable;
+import java.util.Timer;
 
 import edu.pitt.cs.cs1631.g16.votingsoftware.sisservercommunication.SISServerCommunication;
 
@@ -70,6 +71,12 @@ public class InputProcessorService extends Service {
         try {
             commn = new SISServerCommunication(connectData[0], Integer.parseInt(connectData[1]), callbacks, Scope, Role, TAG);
             commn.register();
+            Timer time = new Timer();
+            try {
+                time.wait(200);
+            }catch (Exception e){
+                Log.e(TAG, e.toString());
+            }
             commn.connect();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

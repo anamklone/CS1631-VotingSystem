@@ -8,6 +8,7 @@ import android.os.Message;
 import android.util.Log;
 
 import java.util.Hashtable;
+import java.util.Timer;
 
 import edu.pitt.cs.cs1631.g16.votingsoftware.sisservercommunication.SISServerCommunication;
 import tdr.sisprjremote.Util.KeyValueList;
@@ -81,6 +82,12 @@ public class TableComponentService extends Service {
         try {
             commn = new SISServerCommunication(connectData[0], Integer.parseInt(connectData[1]), callbacks, Scope, Role, TAG);
             commn.register();
+            Timer time = new Timer();
+            try {
+                time.wait(200);
+            }catch (Exception e){
+                Log.e(TAG, e.toString());
+            }
             commn.connect();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -110,7 +117,8 @@ public class TableComponentService extends Service {
             voterTable = new VoterTable();
             tallyTable = new TallyTable(msg.getValue(CandidateList));
             yesNo = "Yes";
-        }
+        }else
+            Log.i(TAG, "Incorrect Passcode!!!!");
 
         try {
             commn.ack("701", yesNo, TAG);

@@ -1,6 +1,7 @@
 package edu.pitt.cs.cs1631.g16.votingsoftware.guicomponent;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 
 import java.util.Hashtable;
+import java.util.Timer;
 
 import edu.pitt.cs.cs1631.g16.votingsoftware.inputprocessorcomponent.InputProcessorService;
 import edu.pitt.cs.cs1631.g16.votingsoftware.sisservercommunication.SISServerCommunication;
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case SISServerCommunication.MESSAGE_RECEIVED:
                     Log.d(TAG, "Message Received");
                     str = (String)msg.obj;
-                    messageText.setText(str);
+                    messageText.append(str + "***********\n");
                     break;
                 default:
                     super.handleMessage(msg);
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ipAddr = findViewById(R.id.ipInput);
         port = findViewById(R.id.portInput);
-        messageText = findViewById(R.id.text);
+        messageText = findViewById(R.id.messageReceivedList);
 
         if (!isSmsPermissionGranted()) {
             Log.d(TAG, "Request permission" );
@@ -126,10 +128,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void onClick(View v){
-        String msg = "";
-        Hashtable<String, String> attr = new Hashtable<>();
+        final  Context context = this;
 
         if(v.getId() == R.id.connectBtn) {
+
+            connectData = ipAddr.getText().toString() + ";" + port.getText().toString();
+
+            // Start the InputProcessor
+            inputProcessor = new Intent(this, InputProcessorService.class);
+            inputProcessor.setData(Uri.parse(connectData));
+            startService(inputProcessor);
+
+            Timer time = new Timer();
+            try {
+                time.wait(200);
+            }catch (Exception e){
+                Log.e(TAG, e.toString());
+            }
+
+            // Start the TableComponent
+            tableComponent = new Intent(this, TableComponentService.class);
+            tableComponent.setData(Uri.parse(connectData));
+            startService(tableComponent);
+
+            try {
+                time.wait(200);
+            }catch (Exception e){
+                Log.e(TAG, e.toString());
+            }
             try {
                 commn = new SISServerCommunication(ipAddr.getText().toString(), Integer.parseInt(port.getText().toString()), callbacks, Scope, Role, TAG);
 
@@ -141,18 +167,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
-
-            connectData = ipAddr.getText().toString() + ";" + port.getText().toString();
-
-            // Start the InputProcessor
-            inputProcessor = new Intent(this, InputProcessorService.class);
-            inputProcessor.setData(Uri.parse(connectData));
-            startService(inputProcessor);
-
-            // Start the TableComponent
-            tableComponent = new Intent(this, TableComponentService.class);
-            tableComponent.setData(Uri.parse(connectData));
-            startService(tableComponent);
 
             //Once the GUI is connected we can start the voting process
             start.setEnabled(true);
@@ -177,6 +191,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     code = passcodeInput.getText().toString();
+                    //Builder to get list of candidates
+                    AlertDialog.Builder candidateInputBox = new AlertDialog.Builder(context);
+                    candidateInputBox.setTitle("Enter a list of candidates separated by ;");
+
+                    // Set up the input
+                    final EditText candidateInput = new EditText(context);
+                    candidateInput.setInputType(InputType.TYPE_CLASS_TEXT);
+                    candidateInputBox.setView(candidateInput);
+
+                    // Set up the buttons
+                    candidateInputBox.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String msg = "";
+                            Hashtable<String, String> attr = new Hashtable<>();
+                            list = candidateInput.getText().toString();
+                            String Receiver = "TableComponent";
+                            try {
+                                attr.put(MsgId, "703");
+                                attr.put(Passcode, code);
+                                attr.put(CandidateList, list);
+                                commn.sendMessage(TAG, Receiver, SISServerCommunication.MessageType.ALERT, msg, attr);
+                            } catch (Exception e) {
+                                Log.e(TAG, e.toString());
+                            }
+                        }
+                    });
+                    candidateInputBox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    candidateInputBox.show();
+
                 }
             });
             userPasscodeDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -188,47 +238,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             userPasscodeDialog.show();
 
-            //Builder to get list of candidates
-            AlertDialog.Builder candidateInputBox = new AlertDialog.Builder(this);
-            candidateInputBox.setTitle("Enter a list of candidates separated by ;");
 
-            // Set up the input
-            final EditText candidateInput = new EditText(this);
-            candidateInput.setInputType(InputType.TYPE_CLASS_TEXT);
-            candidateInputBox.setView(candidateInput);
-
-            // Set up the buttons
-            candidateInputBox.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    list = candidateInput.getText().toString();
-                }
-            });
-            candidateInputBox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            candidateInputBox.show();
-
-            String Receiver = "TableComponent";
-            try {
-                attr.put(MsgId, "703");
-                attr.put(Passcode, code);
-                attr.put(CandidateList, list);
-            } catch (Exception e) {
-                Log.e(TAG, "Incorrect message format");
-            }
-
-            try {
-                commn.sendMessage(TAG, Receiver, SISServerCommunication.MessageType.ALERT, msg, attr);
-            } catch (Exception e) {
-                Log.i(TAG, "Not connected to the server");
-                Log.e(TAG, e.getMessage());
-            }
         }else if(v.getId() == R.id.vote){
+
+            //Nested AlertBuilders are ugly but they are the only way to "halt" the UI thread and
+            //force it to wait for a response from the Alerts before sending the vote message to the
+            //SISserver
 
             //Builder to get phone number
             AlertDialog.Builder phoneNoBuilder = new AlertDialog.Builder(this);
@@ -244,6 +259,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     phoneNo = phoneNoInput.getText().toString();
+                    //Builder to get candidate to vote for
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Enter candidate ID");
+
+                    // Set up the input
+                    final EditText candidateIDText = new EditText(context);
+                    candidateIDText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    builder.setView(candidateIDText);
+
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                candidateID = candidateIDText.getText().toString();
+                                String msg = "";
+                                Hashtable<String, String> attr = new Hashtable<>();
+                                String Receiver = "TableComponent";
+
+                                try {
+                                    attr.put(MsgId, "701");
+                                    attr.put(VoterPhoneNo, phoneNo);
+                                    attr.put(CandidateID, candidateID);
+                                    commn.sendMessage(TAG, Receiver, SISServerCommunication.MessageType.ALERT, msg, attr);
+                                }catch (Exception e) {
+                                    Log.i(TAG, e.toString());
+                                }
+                            }catch(NumberFormatException e){
+                                Log.e(TAG, "Not a number");
+                            }
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
                 }
             });
             phoneNoBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -254,48 +309,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
 
             phoneNoBuilder.show();
-
-            //Builder to get candidate to vote for
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Enter candidate ID");
-
-            // Set up the input
-            final EditText candidateIDText = new EditText(this);
-            candidateIDText.setInputType(InputType.TYPE_CLASS_NUMBER);
-            builder.setView(candidateIDText);
-
-            // Set up the buttons
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        candidateID = candidateIDText.getText().toString();
-                    }catch(NumberFormatException e){
-                        Log.e(TAG, "Not a number");
-                    }
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            builder.show();
-
-            //Send our vote to the
-            String Receiver = "TableComponent";
-
-            attr.put(MsgId, "701");
-            attr.put(VoterPhoneNo, phoneNo);
-            attr.put(CandidateID, candidateID);
-
-            try {
-                commn.sendMessage(TAG, Receiver, SISServerCommunication.MessageType.ALERT, msg, attr);
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
         }
     }
 
